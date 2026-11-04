@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proofline — Proof-Carrying Data Analyst</title>
+
+<!-- Fonts from Reference: Playfair Display / Cormorant + Plus Jakarta Sans + JetBrains Mono -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  /* Exact Color Palette from Reference Image */
+  --bg-deep: #070709;
+  --bg-card: rgba(18, 17, 22, 0.76);
+  --bg-card-solid: #121116;
+  --bg-input: rgba(14, 13, 17, 0.85);
+
+  --gold-primary: #d4a359;
+  --gold-light: #f3d49e;
+  --gold-warm: #caa05d;
+  --gold-dark: #8c6328;
+  --gold-gradient: linear-gradient(180deg, #dca85e 0%, #c08d43 100%);
+  --gold-gradient-hover: linear-gradient(180deg, #ebba73 0%, #ce9b50 100%);
+  --gold-glow: rgba(212, 163, 89, 0.35);
+  --gold-border: rgba(212, 163, 89, 0.24);
+  --gold-border-hover: rgba(212, 163, 89, 0.55);
+
+  --text-main: #f5f2eb;
+  --text-muted: #9c9384;
+  --text-dim: #605a50;
+
+  --line-subtle: rgba(255, 255, 255, 0.07);
+  --line-gold: rgba(212, 163, 89, 0.2);
+
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 24px;
+  --shadow-card: 0 25px 60px -15px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background-color: var(--bg-deep);
+  color: var(--text-main);
+  font: 14px/1.6 var(--font-sans);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Background Atmosphere from Reference: Stardust + Golden Horizon + Mountains Silhouette */
+.hero-atmosphere {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+/* Golden sunset backlight glow */
+.atmosphere-glow {
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(1300px, 95vw);
+  height: 600px;
+  background: radial-gradient(ellipse at center, rgba(212, 163, 89, 0.22) 0%, rgba(160, 110, 40, 0.08) 50%, transparent 75%);
+  filter: blur(50px);
+}
+
+/* Twinkling star field */
+.atmosphere-stars {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    radial-gradient(1px 1px at 20px 30px, #ffffff, transparent),
+    radial-gradient(1.5px 1.5px at 120px 70px, rgba(243, 212, 158, 0.9), transparent),
+    radial-gradient(1px 1px at 240px 140px, #ffffff, transparent),
+    radial-gradient(1.5px 1.5px at 380px 50px, rgba(212, 163, 89, 0.8), transparent),
+    radial-gradient(1px 1px at 560px 110px, #ffffff, transparent),
+    radial-gradient(1px 1px at 720px 80px, rgba(243, 212, 158, 0.7), transparent),
+    radial-gradient(1.5px 1.5px at 890px 160px, #ffffff, transparent),
+    radial-gradient(1px 1px at 1040px 40px, rgba(212, 163, 89, 0.8), transparent),
+    radial-gradient(1px 1px at 1280px 120px, #ffffff, transparent);
+  background-size: 650px 350px;
+  opacity: 0.65;
+}
+
+/* Flowing Golden Wave Ribbons from Reference Image */
+.atmosphere-ribbons {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 480px;
+  opacity: 0.45;
+}
+
+button, input, select {
+  font: inherit;
+  outline: none;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar { width: 7px; height: 7px; }
+::-webkit-scrollbar-track { background: rgba(7, 7, 9, 0.85); }
+::-webkit-scrollbar-thumb { background: #26231e; border-radius: 4px; border: 1px solid rgba(212, 163, 89, 0.2); }
+::-webkit-scrollbar-thumb:hover { background: #3d362c; border-color: var(--gold-primary); }
+
+.app {
+  max-width: 1440px;
+  margin: auto;
+  padding: 24px 30px;
+  position: relative;
+  z-index: 1;
+}
+
+/* TOP NAVIGATION */
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 26px;
+  padding: 14px 24px;
+  background: var(--bg-card);
+  border: 1px solid var(--gold-border);
+  border-top: 1px solid rgba(255, 230, 180, 0.2);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  box-shadow: var(--shadow-card);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--gold-gradient);
+  display: grid;
+  place-items: center;
+  color: #171004;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 26px;
+  box-shadow: 0 0 25px var(--gold-glow), inset 0 1px 1px rgba(255,255,255,0.7);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.brand:hover .logo {
+  transform: scale(1.05) rotate(2deg);
+}
+
+.brand h1 {
+  font-size: 19px;
+  margin: 0;
+  letter-spacing: 0.5px;
+  font-weight: 700;
+  color: #fff;
+}
+.brand h1 span {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 600;
+  color: var(--gold-primary);
+  font-size: 21px;
+  margin-left: 2px;
+}
+
+.brand p {
+  margin: 3px 0 0;
+  color: var(--text-muted);
+  font-size: 11.5px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.top-right {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* Reference Status Pill */
+.status {
+  border: 1px solid rgba(212, 163, 89, 0.35);
+  color: var(--gold-light);
+  background: rgba(212, 163, 89, 0.1);
+  padding: 8px 16px;
+  border-radius: 30px;
+  font-size: 10.5px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  letter-spacing: 0.12em;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 0 15px rgba(212, 163, 89, 0.15);
+}
+.status::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold-primary);
+  box-shadow: 0 0 8px var(--gold-primary);
+  animation: pulseGold 2.2s infinite ease-in-out;
+}
+@keyframes pulseGold {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.5; }
+}
+
+/* LUXURY GOLDEN BUTTONS FROM REFERENCE */
+.btn {
+  border: 1px solid rgba(212, 163, 89, 0.28);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-main);
+  padding: 11px 18px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.btn:hover:not(:disabled) {
+  border-color: var(--gold-primary);
+  background: rgba(212, 163, 89, 0.12);
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5), 0 0 18px rgba(212, 163, 89, 0.25);
+}
+.btn:active:not(:disabled) { transform: translateY(0); }
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Primary Button matches reference 'SIGN IN TO DASHBOARD' */
+.btn.primary {
+  background: var(--gold-gradient);
+  border: none;
+  color: #1a1205;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+  box-shadow: 0 4px 22px rgba(212, 163, 89, 0.38);
+}
+.btn.primary:hover:not(:disabled) {
+  background: var(--gold-gradient-hover);
+  box-shadow: 0 6px 30px rgba(212, 163, 89, 0.6);
+  color: #0c0802;
+}
+
+/* APP LAYOUT */
+.layout {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  gap: 24px;
+}
+
+/* Reference Card Glassmorphism */
+.panel {
+  background: var(--bg-card);
+  border: 1px solid var(--gold-border);
+  border-top: 1px solid rgba(255, 230, 180, 0.2);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  position: relative;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.panel:hover {
+  border-color: var(--gold-border-hover);
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Section label matches reference small tracked-out caps */
+.section-label {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--gold-warm);
+  font-weight: 700;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Drop Zone */
+.drop {
+  border: 1.5px dashed rgba(212, 163, 89, 0.35);
+  border-radius: 14px;
+  padding: 28px 16px;
+  text-align: center;
+  background: rgba(12, 11, 15, 0.7);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+.drop:hover, .drop.drag {
+  border-color: var(--gold-primary);
+  background: rgba(212, 163, 89, 0.08);
+  box-shadow: 0 0 26px rgba(212, 163, 89, 0.24);
+  transform: translateY(-2px);
+}
+.drop strong {
+  display: block;
+  margin: 10px 0 4px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+}
+.drop small {
+  color: var(--text-muted);
+  font-size: 11.5px;
+  display: block;
+}
+.drop .upload-icon {
+  width: 46px;
+  height: 46px;
+  margin: 0 auto;
+  border-radius: 12px;
+  background: rgba(212, 163, 89, 0.12);
+  border: 1px solid rgba(212, 163, 89, 0.35);
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  color: var(--gold-primary);
+  box-shadow: 0 0 16px rgba(212, 163, 89, 0.2);
+  transition: transform 0.25s;
+}
+.drop:hover .upload-icon {
+  transform: translateY(-2px) scale(1.08);
+}
+#fileInput { display: none; }
+
+.dataset-name {
+  font-weight: 700;
+  overflow-wrap: anywhere;
+  color: var(--gold-light);
+  font-size: 13px;
+}
+.muted { color: var(--text-muted); }
+.mini {
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+}
+
+.side-stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line-subtle);
+  font-size: 12.5px;
+}
+.side-stat:last-child { border: 0; }
+.side-stat b {
+  font-family: var(--font-mono);
+  color: #fff;
+  font-weight: 700;
+}
+
+/* Reference styled input / select */
+select {
+  background: var(--bg-input);
+  color: #fff;
+  border: 1px solid rgba(212, 163, 89, 0.25);
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+select:focus {
+  border-color: var(--gold-primary);
+  box-shadow: 0 0 16px rgba(212, 163, 89, 0.28);
+}
+select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* MAIN VIEWPORT */
+.main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* Welcome Box with Reference Scripture Quote Style */
+.welcome {
+  padding: 28px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  background: linear-gradient(130deg, rgba(28, 22, 16, 0.95) 0%, rgba(18, 17, 23, 0.95) 65%);
+  border: 1px solid rgba(212, 163, 89, 0.35);
+  border-top: 1px solid rgba(255, 230, 180, 0.25);
+  border-radius: var(--radius-lg);
+  position: relative;
+  overflow: hidden;
+}
+.welcome::after {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 220px; height: 220px;
+  background: radial-gradient(circle, rgba(212, 163, 89, 0.22) 0%, transparent 70%);
+  pointer-events: none;
+}
+.welcome h2 {
+  font-size: 28px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  margin: 0 0 6px;
+  color: #fff;
+  letter-spacing: -0.01em;
+}
+.welcome h2 em {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 600;
+  color: var(--gold-primary);
+  margin-left: 2px;
+}
+.welcome p {
+  margin: 0;
+  color: var(--text-muted);
+  max-width: 720px;
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+.hero-mark {
+  font-size: 50px;
+  color: var(--gold-primary);
+  opacity: 0.9;
+  text-shadow: 0 0 25px var(--gold-glow);
+  user-select: none;
+}
+
+/* 4 Metrics Cards formatted like the 4 Icons at bottom-left in Reference */
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.metric {
+  background: var(--bg-card);
+  border: 1px solid var(--gold-border);
+  border-radius: var(--radius-md);
+  padding: 22px 18px;
+  box-shadow: var(--shadow-card);
+  transition: transform 0.25s, border-color 0.25s;
+  position: relative;
+  overflow: hidden;
+}
+.metric:hover {
+  transform: translateY(-2px);
+  border-color: var(--gold-primary);
+}
+.metric .label {
+  color: var(--gold-warm);
+  font-size: 10px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.metric .value {
+  font-size: 30px;
+  font-weight: 700;
+  margin-top: 6px;
+  color: #fff;
+  font-family: var(--font-serif);
+  letter-spacing: 0.01em;
+}
+.metric .foot {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* Grid 2Col */
+.grid2 {
+  display: grid;
+  grid-template-columns: 1.25fr 0.75fr;
+  gap: 22px;
+}
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.panel-head h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0;
+  color: #fff;
+  letter-spacing: 0.02em;
+}
+.pill {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 3px 9px;
+  border-radius: 20px;
+  background: rgba(212, 163, 89, 0.12);
+  color: var(--gold-primary);
+  border: 1px solid rgba(212, 163, 89, 0.35);
+}
+
+.chart-wrap {
+  height: 270px;
+  position: relative;
+  border-radius: 12px;
+  background: rgba(10, 9, 13, 0.65);
+  border: 1px solid var(--line-subtle);
+  padding: 10px;
+  margin-top: 12px;
+}
+.chart-wrap canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+.chart-controls {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.chart-controls select, .toolbar select {
+  background: var(--bg-input);
+  color: var(--text-main);
+  border: 1px solid rgba(212, 163, 89, 0.25);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 12px;
+}
+
+/* Insights Cards */
+.insight {
+  padding: 15px 18px;
+  border: 1px solid var(--gold-border);
+  background: rgba(20, 18, 25, 0.7);
+  border-radius: 12px;
+  margin-bottom: 11px;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.insight:hover {
+  border-color: var(--gold-primary);
+  transform: translateX(2px);
+}
+.insight:last-child { margin: 0; }
+.insight b {
+  display: block;
+  font-size: 13px;
+  color: #fff;
+  margin-bottom: 3px;
+}
+.insight p {
+  color: #c4bbb0;
+  font-size: 12px;
+  margin: 0;
+  line-height: 1.55;
+}
+.insight .tag {
+  font-size: 9px;
+  font-family: var(--font-mono);
+  color: var(--gold-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  display: inline-block;
+  margin-bottom: 5px;
+  background: rgba(212, 163, 89, 0.12);
+  border: 1px solid rgba(212, 163, 89, 0.25);
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+/* Evidence Ledger */
+.evidence-item {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 12px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--line-subtle);
+  align-items: start;
+}
+.evidence-item:last-child { border: 0; }
+.check {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(212, 163, 89, 0.14);
+  border: 1px solid var(--gold-primary);
+  color: var(--gold-primary);
+  font-weight: 900;
+  font-size: 12px;
+  display: grid;
+  place-items: center;
+  margin-top: 1px;
+}
+.evidence-item b {
+  font-size: 13px;
+  color: #fff;
+}
+.evidence-item p {
+  margin: 3px 0 0;
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* Table Panel */
+.table-panel { overflow: hidden; }
+.toolbar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.table-scroll {
+  overflow: auto;
+  max-height: 350px;
+  border: 1px solid rgba(212, 163, 89, 0.2);
+  border-radius: 12px;
+  background: rgba(10, 9, 13, 0.7);
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  white-space: nowrap;
+  font-size: 12px;
+}
+th, td {
+  text-align: left;
+  padding: 11px 14px;
+  border-bottom: 1px solid rgba(212, 163, 89, 0.1);
+}
+th {
+  position: sticky;
+  top: 0;
+  background: #17151e;
+  color: var(--gold-light);
+  font-weight: 700;
+  font-size: 11.5px;
+  border-bottom: 1px solid var(--gold-border);
+  z-index: 2;
+}
+td {
+  color: #e5dfd5;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+}
+tr:hover td { background: rgba(36, 32, 44, 0.65); }
+
+/* Schema chips */
+.schema {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.chip {
+  font-size: 11px;
+  border: 1px solid var(--gold-border);
+  background: rgba(14, 13, 18, 0.85);
+  border-radius: 6px;
+  padding: 4px 8px;
+  color: #d6cebf;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.chip em {
+  color: var(--gold-primary);
+  font-style: normal;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  background: rgba(212, 163, 89, 0.15);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+.empty {
+  color: var(--text-muted);
+  text-align: center;
+  padding: 50px 10px;
+}
+.empty .big {
+  font-size: 42px;
+  margin-bottom: 10px;
+  color: var(--text-dim);
+}
+
+/* Footer styled with Reference divider line */
+.footer {
+  color: var(--text-muted);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 20px 14px 10px;
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+.footer::before, .footer::after {
+  content: '';
+  height: 1px;
+  flex: 1;
+  max-width: 140px;
+  background: linear-gradient(90deg, transparent, rgba(212, 163, 89, 0.4), transparent);
+}
+
+.notice {
+  color: var(--gold-primary);
+  font-size: 11px;
+  margin-top: 10px;
+  background: rgba(212, 163, 89, 0.08);
+  border: 1px solid rgba(212, 163, 89, 0.25);
+  padding: 8px 12px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hidden { display: none !important; }
+
+/* Responsive adjustments */
+@media (max-width: 980px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar { display: grid; grid-template-columns: 1fr 1fr; }
+  .metrics { grid-template-columns: repeat(2, 1fr); }
+  .grid2 { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .app { padding: 14px; }
+  .top { flex-direction: column; align-items: flex-start; }
+  .top-right { width: 100%; justify-content: flex-end; flex-wrap: wrap; }
+  .sidebar { grid-template-columns: 1fr; }
+  .metrics { grid-template-columns: 1fr; }
+  .welcome { flex-direction: column; align-items: flex-start; }
+  .hero-mark { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- Reference Background Atmosphere (Golden Sunset Glow + Flowing Golden Ribbons) -->
+<div class="hero-atmosphere">
+  <div class="atmosphere-glow"></div>
+  <div class="atmosphere-stars"></div>
+  <svg class="atmosphere-ribbons" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 480" preserveAspectRatio="none">
+    <defs>
+      <linearGradient id="goldRibbonGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#caa05d" stop-opacity="0.6"/>
+        <stop offset="45%" stop-color="#f3d49e" stop-opacity="0.8"/>
+        <stop offset="80%" stop-color="#caa05d" stop-opacity="0.4"/>
+        <stop offset="100%" stop-color="#8c6328" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <path d="M-100,320 C200,240 450,420 800,360 C1100,310 1300,410 1600,340" stroke="url(#goldRibbonGrad)" stroke-width="1.5" fill="none"/>
+    <path d="M-100,340 C220,260 480,440 820,380 C1120,330 1320,430 1600,360" stroke="url(#goldRibbonGrad)" stroke-width="1.2" fill="none"/>
+    <path d="M-100,360 C240,280 510,460 840,400 C1140,350 1340,450 1600,380" stroke="url(#goldRibbonGrad)" stroke-width="1.0" fill="none"/>
+    <path d="M-100,380 C260,300 540,480 860,420 C1160,370 1360,470 1600,400" stroke="url(#goldRibbonGrad)" stroke-width="0.8" fill="none"/>
+  </svg>
+</div>
+
+<div class="app">
+<header class="top">
+ <div class="brand"><div class="logo">P</div><div><h1>PROOFLINE <span>/ ANALYTICS</span></h1><p>Proof-carrying data analysis workspace</p></div></div>
+ <div class="top-right"><span class="status">LOCAL ANALYSIS ENGINE</span><button class="btn" id="sampleBtn">Load sample data</button><button class="btn primary" id="exportBtn" disabled>Export report ↗</button></div>
+</header>
+<div class="layout">
+<aside class="sidebar">
+ <section class="panel">
+  <div class="section-label">01 / Data source</div>
+  <div class="drop" id="dropZone" tabindex="0"><div class="upload-icon">⇧</div><strong>Drop a dataset here</strong><small>or click to browse · CSV / JSON</small><input type="file" id="fileInput" accept=".csv,.json,text/csv,application/json"></div>
+  <div id="fileMeta" class="hidden" style="margin-top:13px"><div class="dataset-name" id="fileName"></div><div class="mini" id="fileInfo"></div></div>
+  <div class="notice">Files are processed in your browser. No upload to a server.</div>
+ </section>
+ <section class="panel">
+  <div class="section-label">02 / Dataset profile</div>
+  <div id="profile"><div class="empty" style="padding:20px 0">Upload a dataset to inspect its structure.</div></div>
+ </section>
+ <section class="panel">
+  <div class="section-label">03 / Analysis settings</div>
+  <div class="mini" style="margin-bottom:7px">Chart category / X axis</div><select id="xSelect" style="width:100%;margin-bottom:10px" disabled><option>Waiting for data…</option></select>
+  <div class="mini" style="margin-bottom:7px">Numeric measure / Y axis</div><select id="ySelect" style="width:100%" disabled><option>Waiting for data…</option></select>
+  <button class="btn primary" id="analyseBtn" style="width:100%;margin-top:13px" disabled>↻ Re-run analysis</button>
+ </section>
+</aside>
+<main class="main">
+ <section class="panel welcome"><div><div class="section-label">Evidence-first analytics</div><h2>Turn raw data into <em>defensible decisions.</em></h2><p>Explore patterns, inspect automated findings, and trace every reported metric back to a reproducible computation.</p></div><div class="hero-mark">⌁</div></section>
+ <div id="dashboard">
+  <section class="panel empty"><div class="big">▤</div><b>Your analysis workspace is ready</b><p>Load the sample dataset or upload a CSV / JSON file to begin.</p></section>
+ </div>
+ <div class="footer">PROOFLINE · DESCRIPTIVE ANALYTICS ONLY · DEFECT-FREE EVIDENCE</div>
+</main>
+</div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+let rows=[], headers=[], numeric=[], datasetLabel='dataset.csv', evidence=[];
+const fmt=n=>Number.isFinite(n)?new Intl.NumberFormat(undefined,{maximumFractionDigits:3}).format(n):'—';
+
+function parseCSV(text){
+ const out=[];let row=[],cell='',q=false;
+ for(let i=0;i<text.length;i++){
+   const c=text[i];
+   if(c==='"'&&q&&text[i+1]==='"'){cell+='"';i++}
+   else if(c==='"'){q=!q}
+   else if(c===','&&!q){row.push(cell);cell=''}
+   else if((c==='\n'||c==='\r')&&!q){if(c==='\r'&&text[i+1]==='\n')i++;row.push(cell);if(row.some(x=>x.trim()!==''))out.push(row);row=[];cell=''}
+   else cell+=c;
+ }
+ row.push(cell);if(row.some(x=>x.trim()!==''))out.push(row);
+ if(out.length<2)throw Error('The CSV needs a header row and at least one data row.');
+ const h=out[0].map((v,i)=>v.trim()||`Column ${i+1}`);
+ return out.slice(1).map(r=>Object.fromEntries(h.map((k,i)=>[k,(r[i]??'').trim()])));
+}
+
+function inferTypes(){
+ headers=Object.keys(rows[0]||{});
+ numeric=headers.filter(h=>{
+   let vals=rows.map(r=>r[h]).filter(v=>v!==''&&v!=null);
+   return vals.length>0&&vals.every(v=>Number.isFinite(Number(v)));
+ });
+}
+
+function cleanNum(h){return rows.map(r=>r[h]).filter(v=>v!==''&&v!=null&&Number.isFinite(Number(v))).map(Number)}
+
+function stats(a){
+ let s=[...a].sort((x,y)=>x-y),n=s.length,mean=a.reduce((x,y)=>x+y,0)/n,variance=a.reduce((x,y)=>x+(y-mean)**2,0)/n;
+ return {n,mean,min:s[0],max:s[n-1],median:n%2?s[(n-1)/2]:(s[n/2-1]+s[n/2])/2,sd:Math.sqrt(variance)}
+}
+
+function addEvidence(name,detail,formula){evidence.push({name,detail,formula})}
+
+function analyse(){
+ if(!rows.length)return;
+ evidence=[];inferTypes();
+ const missing=headers.reduce((s,h)=>s+rows.filter(r=>r[h]===''||r[h]==null).length,0);
+ addEvidence('Completeness scan',`${missing} empty cells across ${rows.length*headers.length} cells.`,`Count cells where value is empty or null.`);
+ addEvidence('Type inference',`${numeric.length} numeric columns identified: ${numeric.join(', ')||'none'}.`,`A column is numeric when every non-empty value converts to a finite number.`);
+ const dup=new Set(rows.map(r=>JSON.stringify(headers.map(h=>r[h])))).size,duplicates=rows.length-dup;
+ addEvidence('Duplicate row check',`${duplicates} duplicate row(s) detected.`,`Unique rows = count of distinct serialized row values; duplicates = total rows − unique rows.`);
+ 
+ const profile=$('#profile');
+ profile.innerHTML=`
+   <div class="side-stat"><span class="muted">Records</span><b>${fmt(rows.length)}</b></div>
+   <div class="side-stat"><span class="muted">Fields</span><b>${headers.length}</b></div>
+   <div class="side-stat"><span class="muted">Numeric fields</span><b>${numeric.length}</b></div>
+   <div class="side-stat"><span class="muted">Missing cells</span><b>${missing}</b></div>
+   <div class="side-stat"><span class="muted">Duplicate rows</span><b>${duplicates}</b></div>
+   <div class="section-label" style="margin-top:14px">Detected schema</div>
+   <div class="schema">${headers.map(h=>`<span class="chip">${esc(h)} <em>${numeric.includes(h)?'NUM':'TEXT'}</em></span>`).join('')}</div>
+ `;
+
+ const x=$('#xSelect'),y=$('#ySelect');
+ x.innerHTML=headers.map(h=>`<option value="${escAttr(h)}">${esc(h)}</option>`).join('');
+ y.innerHTML=numeric.map(h=>`<option value="${escAttr(h)}">${esc(h)}</option>`).join('');
+ x.disabled=!headers.length;
+ y.disabled=!numeric.length;
+ $('#analyseBtn').disabled=!numeric.length;
+
+ if(numeric.length){renderDashboard(x.value,numeric[0],missing,duplicates)}else renderNoNumeric(missing,duplicates);
+}
+
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function escAttr(s){return esc(s)}
+
+function renderNoNumeric(m,d){
+ $('#dashboard').innerHTML=`<section class="panel"><h3>Dataset loaded</h3><p class="muted">No numeric columns were detected, so statistical summaries and numeric charts are unavailable. You can still inspect the records and data-quality checks.</p>${evidenceHTML()}</section>${tableHTML()}`
+}
+
+function renderDashboard(xh,yh,missing,duplicates){
+ const vals=cleanNum(yh),st=stats(vals),unique=new Set(rows.map(r=>r[xh])).size;
+ const insights=[];
+ insights.push(['Distribution',`${yh} has an average of ${fmt(st.mean)} and a median of ${fmt(st.median)} across ${st.n} valid values.`,'DESCRIPTIVE']);
+ if(st.sd===0)insights.push(['No variation detected',`${yh} is constant in the valid records (standard deviation 0).`,'QUALITY']);
+ else {let cv=Math.abs(st.mean)>1e-12?st.sd/Math.abs(st.mean):null;insights.push(['Spread',`Standard deviation is ${fmt(st.sd)}${cv===null?'':`; coefficient of variation is ${fmt(cv*100)}%`}.`,'DESCRIPTIVE'])}
+ if(missing)insights.push(['Missing data',`${missing} cells are empty. Check whether missingness is systematic before drawing conclusions.`,'DATA QUALITY']);
+ if(duplicates)insights.push(['Repeated records',`${duplicates} duplicate rows were found. Confirm whether these represent repeated events or accidental duplication.`,'DATA QUALITY']);
+ 
+ const groups=groupBy(xh,yh);
+ if(groups.length>1){let top=[...groups].sort((a,b)=>b.mean-a.mean)[0];insights.push(['Highest group mean',`${top.key} has the highest average ${yh} (${fmt(top.mean)}). This is an association in this dataset, not evidence of causation.`,'COMPARISON'])}
+ 
+ addEvidence('Numeric summary',`${yh}: n=${st.n}, mean=${fmt(st.mean)}, median=${fmt(st.median)}, SD=${fmt(st.sd)}, min=${fmt(st.min)}, max=${fmt(st.max)}.`,`Mean = Σx/n; population SD = sqrt(Σ(x−mean)²/n); median = middle sorted value (or average of two middle values).`);
+ addEvidence('Category aggregation',`${xh} contains ${unique} distinct value(s); ${groups.length} groups have numeric summaries.`,`For each category in ${xh}, compute count and arithmetic mean of valid numeric ${yh} values.`);
+ addEvidence('Outlier screening',`${yh}: Tukey fences are ${fmt(stats(vals).min)}-based; inspect the box-plot rule below.`,`IQR = Q3−Q1; flag values below Q1−1.5×IQR or above Q3+1.5×IQR. Screening only; not automatic deletion.`);
+
+ $('#dashboard').innerHTML=`
+ <div class="metrics">
+  <div class="metric"><div class="label">TOTAL RECORDS</div><div class="value">${fmt(rows.length)}</div><div class="foot">Rows in current dataset</div></div>
+  <div class="metric"><div class="label">NUMERIC FIELDS</div><div class="value">${numeric.length}</div><div class="foot">Inferred from values</div></div>
+  <div class="metric"><div class="label">AVERAGE · ${esc(yh)}</div><div class="value">${fmt(st.mean)}</div><div class="foot">n = ${st.n} valid values</div></div>
+  <div class="metric"><div class="label">MISSING CELLS</div><div class="value">${fmt(missing)}</div><div class="foot">${fmt(rows.length*headers.length?missing/(rows.length*headers.length)*100:0)}% of all cells</div></div>
+ </div>
+ <div class="grid2">
+  <section class="panel">
+    <div class="panel-head"><h3>Interactive data visualization</h3><span class="pill">LIVE VIEW</span></div>
+    <div class="chart-controls">
+      <select id="chartType">
+        <option value="bar">Category average · bar</option>
+        <option value="line">Record trend · line</option>
+        <option value="hist">Distribution · histogram</option>
+      </select>
+      <span class="mini" style="align-self:center">X: ${esc(xh)} · Y: ${esc(yh)}</span>
+    </div>
+    <div class="chart-wrap"><canvas id="chart"></canvas></div>
+  </section>
+  <section class="panel">
+    <div class="panel-head"><h3>AI-style analytical insights</h3><span class="pill">RULE-BASED</span></div>
+    <div>${insights.map(i=>`<div class="insight"><span class="tag">${i[2]}</span><b>${esc(i[0])}</b><p>${esc(i[1])}</p></div>`).join('')}</div>
+    <div class="notice">Insights are generated locally from statistical rules, not from a hosted AI model. Treat them as prompts for investigation.</div>
+  </section>
+ </div>
+ <section class="panel">
+   <div class="panel-head"><h3>Evidence & validation ledger</h3><span class="pill">${evidence.length} CHECKS / COMPUTATIONS</span></div>
+   ${evidenceHTML()}
+ </section>
+ ${tableHTML()}`;
+
+ drawChart(xh,yh,$('#chartType').value);
+ $('#chartType').addEventListener('change',e=>drawChart(xh,yh,e.target.value));
+}
+
+function groupBy(xh,yh){
+ let m=new Map();
+ rows.forEach(r=>{let k=r[xh]||'(blank)',v=Number(r[yh]);if(r[yh]!==''&&Number.isFinite(v)){if(!m.has(k))m.set(k,[]);m.get(k).push(v)}});
+ return [...m].map(([key,a])=>({key,count:a.length,mean:a.reduce((s,v)=>s+v,0)/a.length})).slice(0,30);
+}
+
+function evidenceHTML(){
+ return `<div>${evidence.map((e,i)=>`
+   <div class="evidence-item">
+     <div class="check">✓</div>
+     <div>
+       <b>${i+1}. ${esc(e.name)}</b>
+       <p>${esc(e.detail)}</p>
+       <p style="margin-top:4px;"><span style="color:var(--gold-primary);font-family:var(--font-mono);font-weight:600;font-size:10.5px;">METHOD</span> · ${esc(e.formula)}</p>
+     </div>
+   </div>
+ `).join('')}</div>`;
+}
+
+function tableHTML(){
+ return `
+ <section class="panel table-panel">
+   <div class="panel-head">
+     <h3>Dataset preview</h3>
+     <div class="toolbar"><span class="mini">Showing ${Math.min(rows.length,100)} of ${rows.length} rows</span></div>
+   </div>
+   <div class="table-scroll">
+     <table>
+       <thead>
+         <tr>${headers.map(h=>`<th>${esc(h)}</th>`).join('')}</tr>
+       </thead>
+       <tbody>
+         ${rows.slice(0,100).map(r=>`<tr>${headers.map(h=>`<td>${esc(r[h]??'')}</td>`).join('')}</tr>`).join('')}
+       </tbody>
+     </table>
+   </div>
+ </section>`;
+}
+
+/* Polished High-DPI Chart Drawing in Reference Gold */
+function drawChart(xh,yh,type){
+ const canvas=$('#chart');
+ if(!canvas)return;
+ const rect=canvas.getBoundingClientRect(),dpr=window.devicePixelRatio||1;
+ canvas.width=rect.width*dpr;
+ canvas.height=rect.height*dpr;
+ const c=canvas.getContext('2d');
+ c.scale(dpr,dpr);
+
+ const w=rect.width, h=rect.height;
+ const p={l:48, r:16, t:18, b:42};
+ c.clearRect(0,0,w,h);
+ c.font='10.5px "JetBrains Mono", monospace';
+ c.fillStyle='#9c9384';
+ c.strokeStyle='rgba(212, 163, 89, 0.2)';
+ c.lineWidth=1;
+
+ let labels=[],values=[];
+ if(type==='bar'){
+   let g=groupBy(xh,yh);
+   labels=g.map(a=>a.key);
+   values=g.map(a=>a.mean);
+ } else if(type==='line'){
+   let v=cleanNum(yh).slice(0,100);
+   labels=v.map((_,i)=>String(i+1));
+   values=v;
+ } else {
+   let v=cleanNum(yh),lo=Math.min(...v),hi=Math.max(...v),bins=Math.min(12,Math.max(5,Math.ceil(Math.sqrt(v.length))));
+   let width=(hi-lo||1)/bins;
+   values=Array(bins).fill(0);
+   v.forEach(n=>values[Math.min(bins-1,Math.floor((n-lo)/width))]++);
+   labels=values.map((_,i)=>fmt(lo+i*width));
+ }
+ if(!values.length)return;
+
+ let min=type==='hist'?0:Math.min(0,...values), max=Math.max(...values)*1.14||1;
+ if(type==='line'){
+   min=Math.min(...values); max=Math.max(...values);
+   if(min===max){min-=1;max+=1;}
+ }
+
+ const cw=w-p.l-p.r, ch=h-p.t-p.b;
+
+ // Draw Gridlines & Y-Axis Labels
+ for(let i=0;i<=4;i++){
+   let yy=p.t+ch*i/4;
+   c.beginPath();
+   c.moveTo(p.l,yy);
+   c.lineTo(w-p.r,yy);
+   c.stroke();
+   c.textAlign='right';
+   c.fillText(fmt(max-(max-min)*i/4), p.l - 8, yy+3.5);
+ }
+
+ if(type==='line'){
+   // Warm Gold Area Gradient
+   const grad=c.createLinearGradient(0, p.t, 0, p.t+ch);
+   grad.addColorStop(0, 'rgba(212, 163, 89, 0.35)');
+   grad.addColorStop(1, 'rgba(212, 163, 89, 0.0)');
+
+   c.beginPath();
+   values.forEach((v,i)=>{
+     let xx=p.l+(values.length===1?cw/2:i/(values.length-1)*cw);
+     let yy=p.t+(max-v)/(max-min)*ch;
+     i?c.lineTo(xx,yy):c.moveTo(xx,yy);
+   });
+   c.lineTo(p.l+cw, p.t+ch);
+   c.lineTo(p.l, p.t+ch);
+   c.closePath();
+   c.fillStyle=grad;
+   c.fill();
+
+   // Gold Line stroke
+   c.beginPath();
+   values.forEach((v,i)=>{
+     let xx=p.l+(values.length===1?cw/2:i/(values.length-1)*cw);
+     let yy=p.t+(max-v)/(max-min)*ch;
+     i?c.lineTo(xx,yy):c.moveTo(xx,yy);
+   });
+   c.strokeStyle='#d4a359';
+   c.lineWidth=2.5;
+   c.stroke();
+
+   // Gold Points
+   values.forEach((v,i)=>{
+     let xx=p.l+(values.length===1?cw/2:i/(values.length-1)*cw);
+     let yy=p.t+(max-v)/(max-min)*ch;
+     c.beginPath();
+     c.arc(xx,yy,3.5,0,Math.PI*2);
+     c.fillStyle='#070709';
+     c.fill();
+     c.strokeStyle='#d4a359';
+     c.lineWidth=2;
+     c.stroke();
+   });
+   c.fillStyle='#9c9384';
+   c.textAlign='center';
+   c.fillText('Record index →', w/2, h - 8);
+
+ } else {
+   let slot=cw/values.length, bw=Math.max(4, Math.min(45, slot*0.65));
+   values.forEach((v,i)=>{
+     let bh=(v-min)/(max-min)*ch;
+     let xx=p.l+i*slot+(slot-bw)/2;
+     let yy=p.t+ch-bh;
+
+     // Gold gradient bar fill
+     const barGrad=c.createLinearGradient(0, yy, 0, yy+bh);
+     barGrad.addColorStop(0, '#dca85e');
+     barGrad.addColorStop(1, '#664319');
+
+     c.fillStyle=barGrad;
+     c.beginPath();
+     const r = Math.min(4, bw/2);
+     c.roundRect ? c.roundRect(xx, yy, bw, bh, [r, r, 0, 0]) : c.rect(xx, yy, bw, bh);
+     c.fill();
+
+     if(values.length<14 || i % Math.ceil(values.length/10) === 0){
+       c.fillStyle='#9c9384';
+       c.save();
+       c.translate(xx+bw/2, h-12);
+       c.rotate(-0.35);
+       c.textAlign='right';
+       c.fillText(String(labels[i]).slice(0,14),0,0);
+       c.restore();
+     }
+   });
+ }
+}
+
+function loadData(data,name){
+ if(!Array.isArray(data)||!data.length||typeof data[0]!=='object')throw Error('Expected a non-empty array of objects.');
+ rows=data.map(r=>Object.fromEntries(Object.entries(r).map(([k,v])=>[String(k),v==null?'':String(v)])));
+ datasetLabel=name;
+ $('#fileName').textContent=name;
+ $('#fileInfo').textContent=`${rows.length} records · ${Object.keys(rows[0]).length} fields`;
+ $('#fileMeta').classList.remove('hidden');
+ $('#exportBtn').disabled=false;
+ analyse();
+}
+
+$('#dropZone').addEventListener('click',()=>$('#fileInput').click());
+$('#dropZone').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ')$('#fileInput').click()});
+$('#fileInput').addEventListener('change',async e=>{
+ let f=e.target.files[0];if(!f)return;
+ try{let t=await f.text(),data=f.name.toLowerCase().endsWith('.json')?JSON.parse(t):parseCSV(t);loadData(data,f.name)}
+ catch(err){alert('Could not read dataset: '+err.message)}
+ e.target.value='';
+});
+
+['dragenter','dragover'].forEach(ev=>$('#dropZone').addEventListener(ev,e=>{e.preventDefault();$('#dropZone').classList.add('drag')}));
+['dragleave','drop'].forEach(ev=>$('#dropZone').addEventListener(ev,e=>{e.preventDefault();$('#dropZone').classList.remove('drag')}));
+$('#dropZone').addEventListener('drop',async e=>{
+ let f=e.dataTransfer.files[0];if(!f)return;
+ try{let t=await f.text(),d=f.name.toLowerCase().endsWith('.json')?JSON.parse(t):parseCSV(t);loadData(d,f.name)}
+ catch(err){alert('Could not read dataset: '+err.message)}
+});
+
+$('#sampleBtn').addEventListener('click',()=>loadData([
+ {Month:'Jan',Revenue:12500,Orders:120,Returns:4,Region:'North'},
+ {Month:'Feb',Revenue:14200,Orders:138,Returns:5,Region:'South'},
+ {Month:'Mar',Revenue:13800,Orders:132,Returns:3,Region:'North'},
+ {Month:'Apr',Revenue:16100,Orders:151,Returns:6,Region:'West'},
+ {Month:'May',Revenue:17400,Orders:165,Returns:4,Region:'South'},
+ {Month:'Jun',Revenue:16900,Orders:159,Returns:7,Region:'West'},
+ {Month:'Jul',Revenue:19300,Orders:181,Returns:5,Region:'North'},
+ {Month:'Aug',Revenue:20500,Orders:193,Returns:4,Region:'South'},
+ {Month:'Sep',Revenue:19800,Orders:188,Returns:8,Region:'West'},
+ {Month:'Oct',Revenue:22400,Orders:211,Returns:6,Region:'North'}
+],'sample_sales_data.csv'));
+
+$('#analyseBtn').addEventListener('click',()=>{
+ let x=$('#xSelect').value,y=$('#ySelect').value;
+ if(y)renderDashboard(x,y,headers.reduce((s,h)=>s+rows.filter(r=>r[h]==='').length,0),rows.length-new Set(rows.map(r=>JSON.stringify(headers.map(h=>r[h])))).size);
+});
+$('#xSelect').addEventListener('change',()=>{if(numeric.length)$('#analyseBtn').click()});
+$('#ySelect').addEventListener('change',()=>$('#analyseBtn').click());
+
+$('#exportBtn').addEventListener('click',()=>{
+ let report={application:'Proofline',dataset:datasetLabel,generatedAt:new Date().toISOString(),records:rows.length,columns:headers,analysis:evidence,notice:'Rule-based descriptive analysis. Validate domain assumptions before decisions.'};
+ let blob=new Blob([JSON.stringify(report,null,2)],{type:'application/json'}),a=document.createElement('a');
+ a.href=URL.createObjectURL(blob);
+ a.download='proofline-analysis-report.json';
+ a.click();
+ URL.revokeObjectURL(a.href);
+});
+
+window.addEventListener('resize',()=>{
+ if(rows.length&&numeric.length)drawChart($('#xSelect').value,$('#ySelect').value,$('#chartType')?.value||'bar');
+});
+</script>
+</body>
+</html>
